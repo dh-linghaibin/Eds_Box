@@ -6,6 +6,8 @@
 
 void BatteryInit(void);
 float BattertGetVolate(u8 chx);
+void BattertSleep(void);
+void BattertOpen(void);
 
 #endif
 

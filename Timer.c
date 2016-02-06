@@ -13,6 +13,16 @@ void TimerInit(void) {
     TIM4_CR1 = 0x01;  
 }
 
+static u8 time_flag = 0;
+
+u8 TimerGetTimeFlag(void) {
+    return time_flag;
+}
+
+void TimerClearTimeFlag(void) {
+    time_flag = 0;
+}
+
 
 #pragma vector=0x19
 __interrupt void TIM4_UPD_OVF_IRQHandler(void)
@@ -24,6 +34,7 @@ __interrupt void TIM4_UPD_OVF_IRQHandler(void)
         count_time++;
     } else {
         count_time = 0;
+        time_flag++;
     }
     
     return;

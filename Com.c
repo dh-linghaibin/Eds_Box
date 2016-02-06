@@ -22,7 +22,7 @@ void ComInit(void) {
 	EXTI_CR1 &= ~BIT(4);//开启PC口中断
 	EXTI_CR1 &= ~BIT(5);
 
-	EXTI_CR1 |= BIT(1);//开启PA口中断
+	EXTI_CR1 &= ~BIT(1);//开启PA口中断
 	EXTI_CR1 &= ~BIT(0);
 }
 
@@ -39,11 +39,11 @@ u8 ComSendWatch(u8 data[]) {
 	COM_WATCH_INT = 0;//中断
 	COM_WATCH_DR = 1;//设置为输出
 	COM_WATCH_OUT = 0;
-	DelayUs(50);//拉低20ms说明总线开始
+	DelayUs(100);//拉低20ms说明总线开始
 	COM_WATCH_DR = 0;//设置为输入
 	DelayUs(1);//拉低20ms说明总线开始
 	while(COM_WATCH_IN == 0) {//等待从机拉高
-		if(wait < 50) {
+		if(wait < 100) {
 			wait++;
 		} else {//超时，退出
 			COM_WATCH_INT = 1;//中断
@@ -51,7 +51,7 @@ u8 ComSendWatch(u8 data[]) {
 		}
 	}
 	while(COM_WATCH_IN == 0) {
-		if(wait < 50) {
+		if(wait < 100) {
 			wait++;
 		} else {//超时，退出
 			COM_WATCH_INT = 1;//中断
@@ -64,16 +64,16 @@ u8 ComSendWatch(u8 data[]) {
 		for(i=0;i<8;i++) {
 			COM_WATCH_OUT = 0;
 			if(data_t&0x80) {
-				DelayUs(40);
+				DelayUs(80);
 			} else {
-				DelayUs(20);
+				DelayUs(40);
 			}
 			COM_WATCH_OUT = 1;
-			DelayUs(10);
+			DelayUs(20);
 			data_t<<=1;
 		}
 	}
-	DelayUs(30);
+	DelayUs(60);
 	COM_WATCH_OUT = 1;
 	COM_WATCH_INT = 1;//中断
 	COM_WATCH_DR = 0;//设置为输入
@@ -94,7 +94,7 @@ u8 ComReadWatch(u8 data_s[]) {
 			return 0x44;
 		}
 	}
-	if(wait > 11) {
+	if(wait > 28) {
 		wait = 0;
 		COM_WATCH_DR = 1;//设置为输出
 		COM_WATCH_OUT = 0;
@@ -105,7 +105,7 @@ u8 ComReadWatch(u8 data_s[]) {
 			for(i=0;i<8;i++) {  
 				data<<=1; 
 				while(COM_WATCH_IN == 1) {
-					if(wait < 60) {
+					if(wait < 200) {
 						wait++;
 					} else {
 						return 0x44;
@@ -113,13 +113,13 @@ u8 ComReadWatch(u8 data_s[]) {
 				}
 				wait = 0;
 				while(COM_WATCH_IN == 0) {
-					if(wait < 60) {
+					if(wait < 200) {
 						wait++;
 					} else {
 						return 0x44;
 					}
 				}
-				if(wait > 11) {//为1
+				if(wait > 30) {//为1
 					data|=0x01;  
 				}
 				wait = 0;					
@@ -151,11 +151,11 @@ u8 ComSendRear(u8 data[]) {
 	COM_REAR_INT = 0;//中断
 	COM_REAR_DR = 1;//设置为输出
 	COM_REAR_OUT = 0;
-	DelayUs(50);//拉低20ms说明总线开始
+	DelayUs(100);//拉低20ms说明总线开始
 	COM_REAR_DR = 0;//设置为输入
 	DelayUs(1);//拉低20ms说明总线开始
 	while(COM_REAR_IN == 0) {//等待从机拉高
-		if(wait < 50) {
+		if(wait < 100) {
 			wait++;
 		} else {//超时，退出
 			COM_REAR_INT = 1;//中断
@@ -163,7 +163,7 @@ u8 ComSendRear(u8 data[]) {
 		}
 	}
 	while(COM_REAR_IN == 0) {
-		if(wait < 50) {
+		if(wait < 100) {
 			wait++;
 		} else {//超时，退出
 			COM_REAR_INT = 1;//中断
@@ -176,16 +176,16 @@ u8 ComSendRear(u8 data[]) {
 		for(i=0;i<8;i++) {
 			COM_REAR_OUT = 0;
 			if(data_t&0x80) {
-				DelayUs(40);
+				DelayUs(80);
 			} else {
-				DelayUs(20);
+				DelayUs(40);
 			}
 			COM_REAR_OUT = 1;
-			DelayUs(10);
+			DelayUs(20);
 			data_t<<=1;
 		}
 	}
-	DelayUs(30);
+	DelayUs(60);
 	COM_REAR_OUT = 1;
 	COM_REAR_INT = 1;//中断
 	COM_REAR_DR = 0;//设置为输入
@@ -206,7 +206,7 @@ u8 ComReadRear(u8 data_s[]) {
 			return 0x44;
 		}
 	}
-	if(wait > 11) {
+	if(wait > 20) {
 		wait = 0;
 		COM_REAR_DR = 1;//设置为输出
 		COM_REAR_OUT = 0;
@@ -217,7 +217,7 @@ u8 ComReadRear(u8 data_s[]) {
 			for(i=0;i<8;i++) {  
 				data<<=1; 
 				while(COM_REAR_IN == 1) {
-					if(wait < 60) {
+					if(wait < 200) {
 						wait++;
 					} else {
 						return 0x44;
@@ -225,13 +225,13 @@ u8 ComReadRear(u8 data_s[]) {
 				}
 				wait = 0;
 				while(COM_REAR_IN == 0) {
-					if(wait < 60) {
+					if(wait < 200) {
 						wait++;
 					} else {
 						return 0x44;
 					}
 				}
-				if(wait > 11) {//为1
+				if(wait > 25) {//为1
 					data|=0x01;  
 				}
 				wait = 0;					
@@ -262,11 +262,11 @@ u8 ComSendBehind(u8 data[]) {
 	COM_BEHIND_INT = 0;//中断
 	COM_BEHIND_DR = 1;//设置为输出
 	COM_BEHIND_OUT = 0;
-	DelayUs(50);//拉低20ms说明总线开始
+	DelayUs(100);//拉低20ms说明总线开始
 	COM_BEHIND_DR = 0;//设置为输入
 	DelayUs(1);//拉低20ms说明总线开始
 	while(COM_BEHIND_IN == 0) {//等待从机拉高
-		if(wait < 50) {
+		if(wait < 100) {
 			wait++;
 		} else {//超时，退出
 			COM_BEHIND_INT = 1;//中断
@@ -274,7 +274,7 @@ u8 ComSendBehind(u8 data[]) {
 		}
 	}
 	while(COM_BEHIND_IN == 0) {
-		if(wait < 50) {
+		if(wait < 100) {
 			wait++;
 		} else {//超时，退出
 			COM_BEHIND_INT = 1;//中断
@@ -287,16 +287,16 @@ u8 ComSendBehind(u8 data[]) {
 		for(i=0;i<8;i++) {
 			COM_BEHIND_OUT = 0;
 			if(data_t&0x80) {
-				DelayUs(40);
+				DelayUs(80);
 			} else {
-				DelayUs(20);
+				DelayUs(40);
 			}
 			COM_BEHIND_OUT = 1;
-			DelayUs(10);
+			DelayUs(20);
 			data_t<<=1;
 		}
 	}
-	DelayUs(30);
+	DelayUs(60);
 	COM_BEHIND_OUT = 1;
 	COM_BEHIND_INT = 1;//中断
 	COM_BEHIND_DR = 0;//设置为输入
@@ -317,7 +317,7 @@ u8 ComReadBehind(u8 data_s[]) {
 			return 0x44;
 		}
 	}
-	if(wait > 11) {
+	if(wait > 28) {
 		wait = 0;
 		COM_BEHIND_DR = 1;//设置为输出
 		COM_BEHIND_OUT = 0;
@@ -328,7 +328,7 @@ u8 ComReadBehind(u8 data_s[]) {
 			for(i=0;i<8;i++) {  
 				data<<=1; 
 				while(COM_BEHIND_IN == 1) {
-					if(wait < 60) {
+					if(wait < 200) {
 						wait++;
 					} else {
 						return 0x44;
@@ -336,13 +336,13 @@ u8 ComReadBehind(u8 data_s[]) {
 				}
 				wait = 0;
 				while(COM_BEHIND_IN == 0) {
-					if(wait < 60) {
+					if(wait < 200) {
 						wait++;
 					} else {
 						return 0x44;
 					}
 				}
-				if(wait > 11) {//为1
+				if(wait > 30) {//为1
 					data|=0x01;  
 				}
 				wait = 0;					
@@ -383,8 +383,7 @@ void ComWatchClearFlag(void) {
 
 void ComWatchSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3) {
     u8 com_t_data[5] = {0,0,0,0,0};//前拨
-	//u16 com_check = 0;//保存累加校验值
-	//com_check = cmd+par1+par2+par3+par4;
+	//u8 com_t_data2[5] = {0,0,0,0,0};//前拨
 	com_t_data[0] = cmd; //cmd
 	com_t_data[1] = par1;
 	com_t_data[2] = par2;
@@ -392,6 +391,7 @@ void ComWatchSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3) {
     com_t_data[4] = com_t_data[0]+com_t_data[1]+com_t_data[2]
                                     +com_t_data[3];
     INTOFF
+    //ComSendWatch(com_t_data2);
 	ComSendWatch(com_t_data);
     INTEN
 }
@@ -410,8 +410,7 @@ void ComRearClearFlag(void) {
 
 void ComRearSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3) {
     u8 com_t_data[5] = {0,0,0,0,0};//前拨
-	//u16 com_check = 0;//保存累加校验值
-	//com_check = cmd+par1+par2+par3+par4;
+    u8 com_t_data2[5] = {0,0,0,0,0};//前拨
 	com_t_data[0] = cmd; //cmd
 	com_t_data[1] = par1;
 	com_t_data[2] = par2;
@@ -419,7 +418,8 @@ void ComRearSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3) {
     com_t_data[4] = com_t_data[0]+com_t_data[1]+com_t_data[2]
                                     +com_t_data[3];
     INTOFF
-	ComSendRear(com_t_data);
+	ComSendRear(com_t_data2);
+    ComSendRear(com_t_data);
     INTEN
 }
 //behind
@@ -437,8 +437,7 @@ void ComBehindClearFlag(void) {
 
 void ComBehindSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3) {
     u8 com_t_data[5] = {0,0,0,0,0};//前拨
-	//u16 com_check = 0;//保存累加校验值
-	//com_check = cmd+par1+par2+par3+par4;
+	u8 com_t_data2[5] = {0,0,0,0,0};//前拨
 	com_t_data[0] = cmd; //cmd
 	com_t_data[1] = par1;
 	com_t_data[2] = par2;
@@ -446,6 +445,7 @@ void ComBehindSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3) {
     com_t_data[4] = com_t_data[0]+com_t_data[1]+com_t_data[2]
                                     +com_t_data[3];
     INTOFF
+    ComSendBehind(com_t_data2);
 	ComSendBehind(com_t_data);
     INTEN
 }
@@ -454,8 +454,8 @@ void ComBehindSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3) {
 __interrupt void EXTI_PORTA_IRQHandler(void)
 {
     INTOFF
-    if(ComReadRear(com_date_rear) == 0x88) {
-        rs_ok_rear = 0x80;
+    if(ComReadBehind(com_date_behind) == 0x88) {
+        rs_ok_behind = 0x80;
     }
     INTEN
 }
@@ -468,8 +468,8 @@ __interrupt void EXTI_PORTC_IRQHandler(void)
     if(ComReadWatch(com_date_watch) == 0x88) {
         rs_ok_watch = 0x80;
     }
-    if(ComReadBehind(com_date_behind) == 0x88) {
-        rs_ok_behind = 0x80;
+    if(ComReadRear(com_date_rear) == 0x88) {
+        rs_ok_rear = 0x80;
     }
     INTEN
 }

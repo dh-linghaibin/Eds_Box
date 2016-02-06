@@ -1,6 +1,8 @@
 
 
 #include "Battery.h"
+#include "Led.h"
+#include "Delay.h"
 
 #define BATTERY_EN PD_ODR_ODR5
 
@@ -20,6 +22,24 @@ void BatteryInit(void) {
 	ADC_TDRL = 0x01;
     
     BATTERY_EN = 1;
+}
+
+static u8 sleep_bit = 0;
+
+void BattertSleep(void) {
+    LedSet(1);
+    BATTERY_EN = 0;
+    sleep_bit = 1;
+    DelayMs(100);
+    MCUSLEEP
+}
+
+void BattertOpen(void) {
+    if(sleep_bit == 1) {
+        sleep_bit = 0;
+        LedSet(0);
+        BATTERY_EN = 1;
+    }
 }
 
 float BattertGetVolate(u8 chx) {
