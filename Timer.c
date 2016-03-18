@@ -23,6 +23,15 @@ void TimerClearTimeFlag(void) {
     time_flag = 0;
 }
 
+static u16 battery_flag = 0;
+
+u8 TimerGetBatteryFlag(void) {
+    return battery_flag;
+}
+
+void TimerClearBatteryFlag(void) {
+    battery_flag = 0;
+}
 
 #pragma vector=0x19
 __interrupt void TIM4_UPD_OVF_IRQHandler(void)
@@ -35,6 +44,7 @@ __interrupt void TIM4_UPD_OVF_IRQHandler(void)
     } else {
         count_time = 0;
         time_flag++;
+        battery_flag++;
     }
     
     return;

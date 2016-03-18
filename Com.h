@@ -38,4 +38,6 @@ void ComBehindSendCmd(u8 cmd,u8 par1,u8 par2,u8 par3);
 #define stopwatch 0x0d //码表
 #define null 0x00 //无任何
 
+#define ask_rear 0xa1//告诉前拨档位
+
 #endif

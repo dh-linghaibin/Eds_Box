@@ -9,6 +9,9 @@ void TimerInit(void);
 u8 TimerGetTimeFlag(void);
 void TimerClearTimeFlag(void);
 
+u8 TimerGetBatteryFlag(void);
+void TimerClearBatteryFlag(void);
+
 #endif
 
 

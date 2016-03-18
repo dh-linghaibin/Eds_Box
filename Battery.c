@@ -37,7 +37,8 @@ void BattertSleep(void) {
 void BattertOpen(void) {
     if(sleep_bit == 1) {
         sleep_bit = 0;
-        LedSet(0);
+        //LedSet(0);
+        LedSetModeFlicker(1);
         BATTERY_EN = 1;
     }
 }
@@ -56,7 +57,41 @@ float BattertGetVolate(u8 chx) {
     ad_h = ADC_DRH;
     ad_l = ADC_DRL;
 	ad_value = (ad_h<<8) + ad_l;
-    volate = (3.3*ad_value)/0xffff;
+    volate = (9.9*ad_value)/0xffff;
     return volate;
+}
+
+static u8 batter_level = 0;
+
+void BattertGet(void) {
+    float bat = 0;
+    bat = BattertGetVolate(6);
+    if(bat > 8.2) {
+        batter_level = 5;
+    } else if(bat > 7.9) {
+        batter_level = 4;
+    } else if(bat > 7.6) {
+        batter_level = 3;
+    } else if(bat > 7.2) {
+        batter_level = 2;
+    } else if(bat > 6.8) {
+        batter_level = 1;
+    } else {
+        batter_level = 0;
+    }
+}
+
+u8 BattertGetLevel(void) {
+    return batter_level;
+}
+
+static u8 batter_flag = 0;
+
+void BatterSetFlag(u8 data) {
+    batter_flag = data;
+}
+
+u8 BatterGetFlag(void) {
+    return batter_flag;
 }
 

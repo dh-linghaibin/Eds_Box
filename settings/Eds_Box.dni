@@ -36,13 +36,15 @@ ActionState=1
 Enabled=0
 ShowSource=1
 [DebugChecksum]
-Checksum=631894982
+Checksum=-1062756875
 [CallStack]
 ShowArgs=0
 [Disassembly]
 MixedMode=1
 [array_types]
 Fmt0=u8[5]	4	0
+[watch_formats]
+Fmt0={W}42:batter_level	3	0
 [DataSample]
 LogEnabled=0
 GraphEnabled=0
